@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="PHP" type="php">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/composer" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/annotations" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/cache" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/collections" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/common" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/dbal" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/doctrine-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/doctrine-cache-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/inflector" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/instantiator" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/lexer" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/orm" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/fig/link-util" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/incenteev/composer-parameter-handler" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/jdorn/sql-formatter" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/monolog/monolog" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/paragonie/random_compat" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/cache" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/container" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/link" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/log" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/simple-cache" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensio/distribution-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensio/framework-extra-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensio/generator-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensiolabs/security-checker" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/swiftmailer/swiftmailer" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/monolog-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/phpunit-bridge" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-apcu" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-intl-icu" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-mbstring" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-php56" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-php70" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-util" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/swiftmailer-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/symfony" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/twig/twig" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/composer" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/annotations" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/cache" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/collections" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/common" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/dbal" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/doctrine-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/doctrine-cache-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/inflector" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/instantiator" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/lexer" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/doctrine/orm" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/fig/link-util" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/incenteev/composer-parameter-handler" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/jdorn/sql-formatter" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/monolog/monolog" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/paragonie/random_compat" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/cache" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/container" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/link" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/log" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/psr/simple-cache" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensio/distribution-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensio/framework-extra-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensio/generator-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/sensiolabs/security-checker" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/swiftmailer/swiftmailer" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/monolog-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/phpunit-bridge" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-apcu" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-intl-icu" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-mbstring" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-php56" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-php70" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/polyfill-util" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/swiftmailer-bundle" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/symfony/symfony" />
+          <root url="file://$MODULE_DIR$/../manga-app/vendor/twig/twig" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
