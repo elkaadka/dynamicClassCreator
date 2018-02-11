@@ -1,11 +1,9 @@
 <?php
 
-namespace Kanel\Dynamic\CodingStyle;
+namespace Kanel\Enuma\CodingStyle;
 
 interface CodingStyleInterface
 {
-    public function useBom();
-
     public function getEncoding();
 
     public function usePhpClosingTag();
@@ -15,6 +13,8 @@ interface CodingStyleInterface
     public function isClassBracesInNewLine();
 
     public function isMethodBracesInNewLine();
+
+    public function useUnixLineFeedEnding();
 
     public function getNewLine();
 }

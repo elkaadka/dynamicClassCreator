@@ -1,35 +1,32 @@
 <?php
 
-namespace Kanel\Dynamic\CodingStyle;
+namespace Kanel\Enuma\CodingStyle;
+
+use Kanel\Enuma\Exception\EnumaException;
 
 /**
  * Class CustomCodingStyle
  * Defines some custom coding style rules to generate the classes/methods/...
- * @package Kanel\Dynamic\CodingStyle
+ * @package Kanel\ClassManipulation\CodingStyle
  */
 class CustomCodingStyle extends CodingStyle
 {
-    /**
-     * Tells if the file needs to have a BOM
-     * Default value is false. You may change it here
-     * @param bool $useBom
-     * @return CustomCodingStyle
-     */
-    public function setUseBom(bool $useBom): CustomCodingStyle
-    {
-        $this->useBom = $useBom;
-
-        return $this;
-    }
+    const INDENTATION_TAB = "\t";
+    const INDENTATION_SPACE = " ";
 
     /**
      * Sets the encoding
      * Default is UTF-8
      * @param string $encoding
      * @return CustomCodingStyle
+     * @throws EnumaException
      */
     public function setEncoding(string $encoding): CustomCodingStyle
     {
+        if (!in_array($encoding, mb_list_encodings())) {
+            throw new EnumaException('Unsupported encoding ' . $encoding);
+        }
+
         $this->encoding = $encoding;
 
         return $this;
@@ -58,7 +55,9 @@ class CustomCodingStyle extends CodingStyle
      */
     public function setIndentation(string $indentation, int $count): CustomCodingStyle
     {
-        $this->indentation = $indentation;
+        if ($indentation === self::INDENTATION_TAB || $indentation === self::INDENTATION_SPACE) {
+            $this->indentation = str_pad('', $count, $indentation);
+        }
 
         return $this;
     }

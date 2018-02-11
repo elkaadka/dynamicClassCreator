@@ -1,10 +1,9 @@
 <?php
 
-namespace Kanel\Dynamic\CodingStyle;
+namespace Kanel\Enuma\CodingStyle;
 
 abstract class CodingStyle implements CodingStyleInterface
 {
-    protected $useBom = false;
     protected $encoding = 'UTF-8';
     protected $usePhpClosingTag = false;
     protected $indentation = '    ';
@@ -20,23 +19,13 @@ abstract class CodingStyle implements CodingStyleInterface
     }
 
     /**
-     * Specifies if php files must use a BOM
-     * defaut value is false
-     * @return bool
-     */
-    public function useBom(): bool
-    {
-        return $this->useBom;
-    }
-
-    /**
      * Returns the encoding to use, default is UTF-8
      * Default value is false
      * @return string
      */
     public function getEncoding(): string
     {
-        // TODO: Implement getEncoding() method.
+        return $this->encoding;
     }
 
     /**
@@ -45,7 +34,7 @@ abstract class CodingStyle implements CodingStyleInterface
      */
     public function usePhpClosingTag(): bool
     {
-        // TODO: Implement useClosingTag() method.
+        return $this->usePhpClosingTag;
     }
 
     /**
@@ -53,9 +42,9 @@ abstract class CodingStyle implements CodingStyleInterface
      * Can only use spaces or tabs
      * Default indentation is 4 spaces
      */
-    public function getIndentation()
+    public function getIndentation(): string
     {
-        // TODO: Implement getIndentation() method.
+        return $this->indentation;
     }
 
     /**
@@ -66,7 +55,7 @@ abstract class CodingStyle implements CodingStyleInterface
      */
     public function isClassBracesInNewLine(): bool
     {
-        // TODO: Implement isClassBracesInNewLine() method.
+        return $this->classBracesInNewLine;
     }
 
     /**
@@ -77,7 +66,7 @@ abstract class CodingStyle implements CodingStyleInterface
      */
     public function isMethodBracesInNewLine(): bool
     {
-        // TODO: Implement isMethodBracesInNewLine() method.
+        return $this->methodBracesInNewLine;
     }
 
     /**
@@ -87,7 +76,7 @@ abstract class CodingStyle implements CodingStyleInterface
      */
     public function useUnixLineFeedEnding(): bool
     {
-        // TODO: Implement useUnixLineFeed() method.
+        return $this->unixLineFeedEnding;
     }
 
     /**
@@ -97,6 +86,6 @@ abstract class CodingStyle implements CodingStyleInterface
      */
     public function getNewLine(): string
     {
-        // TODO: Implement getNewLine() method.
+        return $this->newLine;
     }
 }
