@@ -1,0 +1,84 @@
+<?php
+
+namespace spec\Kanel\Enuma\Component;
+
+use Kanel\Enuma\Component\Method;
+use Kanel\Enuma\Component\Parameter;
+use Kanel\Enuma\Exception\EnumaException;
+use Kanel\Enuma\Hint\VisibilityHint;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
+
+class MethodSpec extends ObjectBehavior
+{
+	function it_should_at_least_be_constructed_with_name_and_visibility()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+	}
+
+	function it_should_throw_and_exception_if_unknown_visibility()
+	{
+		$this->beConstructedWith('name', 'random_visibility');
+		$this->shouldThrow(EnumaException::class)->duringInstantiation();
+	}
+
+	function it_should_be_possible_to_tell_if_function_is_abstract()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+
+		$this->isAbstract()->shouldBe(false);
+		$this->setIsAbstract(true)->shouldBeAnInstanceOf(Method::class);
+		$this->isAbstract()->shouldBe(true);
+	}
+
+	function it_should_be_possible_to_tell_if_function_is_final()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+
+		$this->isFinal()->shouldBe(false);
+		$this->setIsFinal(true)->shouldBeAnInstanceOf(Method::class);
+		$this->isFinal()->shouldBe(true);
+	}
+
+	function it_should_be_possible_to_tell_if_function_is_static()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+
+		$this->isStatic()->shouldBe(false);
+		$this->setIsStatic(true)->shouldBeAnInstanceOf(Method::class);
+		$this->isStatic()->shouldBe(true);
+	}
+
+	function it_should_be_possible_to_define_a_return_type()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+
+		$this->getType()->shouldBe(null);
+		$this->setType('bool')->shouldBeAnInstanceOf(Method::class);
+		$this->getType()->shouldBe('bool');
+	}
+
+	function it_should_be_possible_to_add_parameters()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+		$fooParameter = new Parameter('foor');
+		$barParameter = new Parameter('bar');
+
+		$this->addParameter($fooParameter);
+		$this->addParameter($barParameter);
+
+		$this->getParameters()->shouldIterateAs([$fooParameter, $barParameter]);
+
+	}
+
+	function it_should_be_possible_to_bulk_set_parameters()
+	{
+		$this->beConstructedWith('name', VisibilityHint::PUBLIC);
+		$fooParameter = new Parameter('foor');
+		$barParameter = new Parameter('bar');
+
+		$this->setParameters([$fooParameter, $barParameter]);
+		$this->getParameters()->shouldIterateAs([$fooParameter, $barParameter]);
+
+	}
+}

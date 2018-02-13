@@ -4,9 +4,9 @@ namespace Kanel\Enuma;
 
 use Kanel\Enuma\CodingStyle\CodingStyle;
 use Kanel\Enuma\CodingStyle\Psr2;
-use Kanel\Enuma\Component\ConstDefinition;
-use Kanel\Enuma\Component\FunctionDefinition;
-use Kanel\Enuma\Component\PropertyDefinition;
+use Kanel\Enuma\Component\Constant;
+use Kanel\Enuma\Component\Method;
+use Kanel\Enuma\Component\Property;
 use Kanel\Enuma\Helpers\ClassNameExtractor;
 use Kanel\Enuma\Helpers\CommentGeneration;
 use Kanel\Enuma\Helpers\ValuePrinter;
@@ -125,7 +125,7 @@ class ClassCreator
         $this->sections[self::USE_SECTION] .= 'use ' . $class . $this->codingStyle->getNewLine();
     }
 
-    public function trait(string $trait)
+    public function useTrait(string $trait)
     {
         $this->sections[self::TRAIT_SECTION] = $this->sections[self::TRAIT_SECTION] ?? '';
 
@@ -140,7 +140,7 @@ class ClassCreator
         }
     }
 
-    public function addProperty(PropertyDefinition $property)
+    public function addProperty(Property $property)
     {
         $this->sections[self::PROPERTIES_SECTION] = $this->sections[self::PROPERTIES_SECTION] ?? '';
 
@@ -158,7 +158,7 @@ class ClassCreator
         ;
     }
 
-    public function addConst(ConstDefinition $const)
+    public function addConst(Constant $const)
     {
         $this->sections[self::CONST_SECTION] = $this->sections[self::CONST_SECTION] ?? '';
 
@@ -175,13 +175,14 @@ class ClassCreator
         ;
     }
 
-    public function addFunction(FunctionDefinition $function)
+    public function addFunction(Method $function)
     {
         $this->sections[self::METHODS_SECTION] = $this->sections[self::METHODS_SECTION] ?
             $this->sections[self::METHODS_SECTION] . $this->codingStyle->getNewLine() . $this->codingStyle->getNewLine() : '';
 
         $comment = $function->getComment();
-        $stringParamaters = '';
+        $stringParameters = '';
+		$stringReturnType = '';
 
         foreach ($function->getParameters() as $parameter) {
 
@@ -191,7 +192,7 @@ class ClassCreator
                 $this->use($namespace);
             }
 
-            $stringParamaters .= ($type? $type . ' ' : '')
+            $stringParameters .= ($type? $type . ' ' : '')
                 . '$' . $parameter->getName()
                 . ($parameter->getDefaultValue()? ' = ' . $this->printValue($parameter->getDefaultValue()) : '')
                 . ', ';
@@ -225,11 +226,11 @@ class ClassCreator
             . 'function '
             . $function->getName()
             . '('
-            . rtrim($stringParamaters, ', ')
+            . rtrim($stringParameters, ', ')
             . ')'
             . $stringReturnType
             . (
-                !$function->hasBody() ? ';' :
+					($this instanceof InterfaceCreator || trim($this->sections[self::CLASS_TYPE_SECTION]) == 'abstract') ? ';' :
                     ($this->codingStyle->isMethodBracesInNewLine()? $this->codingStyle->getNewLine() : '')
                     . '{'
                     . $this->codingStyle->getNewLine()
@@ -238,6 +239,7 @@ class ClassCreator
             );
         ;
     }
+
 
     public function getAsString() : string
     {

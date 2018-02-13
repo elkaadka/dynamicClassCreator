@@ -2,8 +2,8 @@
 
 namespace Kanel\Enuma;
 
-use Kanel\Enuma\Component\FunctionDefinition;
-use Kanel\Enuma\Component\PropertyDefinition;
+use Kanel\Enuma\Component\Method;
+use Kanel\Enuma\Component\Property;
 use Kanel\Enuma\Exception\EnumaException;
 
 class InterfaceCreator extends ClassCreator
@@ -48,24 +48,24 @@ class InterfaceCreator extends ClassCreator
      * @param string $trait
      * @throws EnumaException
      */
-    public function trait(string $trait)
+    public function useTrait(string $trait)
     {
         throw new EnumaException('interfaces cannot be traits');
     }
 
     /**
-     * @param PropertyDefinition $property
+     * @param Property $property
      * @throws EnumaException
      */
-    public function addProperty(PropertyDefinition $property)
+    public function addProperty(Property $property)
     {
         throw new EnumaException('interfaces cannot have properties');
     }
 
     /**
-     * @param FunctionDefinition $function
+     * @param Method $function
      */
-    public function addFunction(FunctionDefinition $function)
+    public function addFunction(Method $function)
     {
         $function->setHasBody(false);
         parent::addFunction($function);
