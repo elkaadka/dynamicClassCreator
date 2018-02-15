@@ -7,9 +7,9 @@ use Kanel\Enuma\CodingStyle\Psr2;
 use Kanel\Enuma\Component\Constant;
 use Kanel\Enuma\Component\Method;
 use Kanel\Enuma\Component\Property;
-use Kanel\Enuma\Helpers\ClassNameExtractor;
-use Kanel\Enuma\Helpers\CommentGeneration;
-use Kanel\Enuma\Helpers\ValuePrinter;
+use Kanel\Enuma\Helper\ClassNameExtractor;
+use Kanel\Enuma\Helper\CommentGeneration;
+use Kanel\Enuma\Helper\ValuePrinter;
 
 class ClassCreator
 {
@@ -32,7 +32,8 @@ class ClassCreator
     const PROPERTIES_SECTION = 10;
     const METHODS_SECTION = 11;
     const CLASS_END_SECTION = 12;
-    const PHP_CLOSE_TAG_SECTION0 = 13;
+    const LINE_FEED = 13;
+    const PHP_CLOSE_TAG_SECTION0 = 14;
 
     protected $sections = [];
     protected $codingStyle;
@@ -51,34 +52,56 @@ class ClassCreator
 
         $this->sections[self::PHP_OPEN_TAG_SECTION] = '<?php'
             . $this->codingStyle->getNewLine()
-            . $this->codingStyle->getNewLine()
         ;
 
         $this->sections[self::PHP_CLOSE_TAG_SECTION0] = '';
 
         if ($this->codingStyle->usePhpClosingTag()) {
-            $this->sections[self::PHP_CLOSE_TAG_SECTION0] = "\n?>";
-        }
-
-        if ($this->codingStyle->useUnixLineFeedEnding()) {
-            $this->sections[self::PHP_CLOSE_TAG_SECTION0] = "\n";
+            $this->sections[self::PHP_CLOSE_TAG_SECTION0] = $this->codingStyle->getNewLine() . "?>";
         }
     }
 
-    public function name(string $name)
+    public function getCodingStyle(): CodingStyle
+    {
+        return $this->codingStyle;
+    }
+
+    public function namespace(string $namespace)
+    {
+        $this->sections[self::NAMESPACE_SECTION] = $this->codingStyle->getNewLine() .
+            'namespace ' . $namespace . ';' .
+            $this->codingStyle->getNewLine() .
+            $this->codingStyle->getNewLine();
+    }
+
+    public function use(string $class)
+    {
+        $this->sections[self::USE_SECTION] = $this->sections[self::USE_SECTION] ?? '';
+        $this->sections[self::USE_SECTION] .= 'use ' . $class . ';' .
+            $this->codingStyle->getNewLine() .
+            $this->codingStyle->getNewLine();
+    }
+
+    public function class(string $name)
     {
         $this->sections[self::CLASS_DECLARATION_SECTION] = self::KEYWORD . ' ' . $name .
             ($this->codingStyle->isClassBracesInNewLine()? $this->codingStyle->getNewLine() : "") .
             "{" .
             $this->codingStyle->getNewLine();
+
+        $this->sections[self::CLASS_END_SECTION] = '}' . $this->codingStyle->getNewLine();
+
+        if ($this->codingStyle->useUnixLineFeedEnding()) {
+            $this->sections[self::LINE_FEED] = $this->sections[self::LINE_FEED] ?? $this->codingStyle->getNewLine();
+        }
     }
 
-    public function makeAbstract()
+    public function abstract()
     {
         $this->sections[self::CLASS_TYPE_SECTION] = 'abstract ';
     }
 
-    public function makeFinal()
+    public function final()
     {
         $this->sections[self::CLASS_TYPE_SECTION] = 'final ';
     }
@@ -112,17 +135,6 @@ class ClassCreator
         $this->sections[self::CLASS_COMMENT_SECTION] = $this->generateDocComment($comment, null, $this->codingStyle->getNewLine()) .
             $this->codingStyle->getNewLine()
         ;
-    }
-
-    public function namespace(string $namespace)
-    {
-        $this->sections[self::NAMESPACE_SECTION] = 'namespace ' . $namespace . $this->codingStyle->getNewLine();
-    }
-
-    public function use(string $class)
-    {
-        $this->sections[self::USE_SECTION] = $this->sections[self::USE_SECTION] ?? '';
-        $this->sections[self::USE_SECTION] .= 'use ' . $class . $this->codingStyle->getNewLine();
     }
 
     public function useTrait(string $trait)
@@ -230,7 +242,7 @@ class ClassCreator
             . ')'
             . $stringReturnType
             . (
-					($this instanceof InterfaceCreator || trim($this->sections[self::CLASS_TYPE_SECTION]) == 'abstract') ? ';' :
+					($this instanceof InterfaceCreator || trim($function->isAbstract()) == 'abstract') ? ';' :
                     ($this->codingStyle->isMethodBracesInNewLine()? $this->codingStyle->getNewLine() : '')
                     . '{'
                     . $this->codingStyle->getNewLine()
@@ -240,25 +252,26 @@ class ClassCreator
         ;
     }
 
-
-    public function getAsString() : string
+    public function toString() : string
     {
+        print_r($this->sections);
         return array_reduce($this->sections, function($carry, $section) {
             $carry .= $section;
             return $carry;
         }, '');
     }
 
+    public function __toString()
+    {
+        return $this->toString();
+    }
+
     public function saveToFile(string $fileName)
     {
         return file_put_contents(
             $fileName,
-            array_reduce($this->sections, function($carry, $section) {
-                $carry .= $section;
-                return $carry;
-            },
-            ''
-            )
+            $this->toString(),
+            'r+'
         );
     }
 }

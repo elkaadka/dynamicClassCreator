@@ -2,7 +2,7 @@
 
 namespace Kanel\Enuma\Hint;
 
-class VisibilityHint
+class VisibilityHint extends Hint
 {
     const PRIVATE = 'private';
     const PROTECTED = 'protected';

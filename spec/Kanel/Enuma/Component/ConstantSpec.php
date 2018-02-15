@@ -24,9 +24,11 @@ class ConstantSpec extends ObjectBehavior
 		$this->getVisibility()->shouldBe(VisibilityHint::PRIVATE);
 	}
 
-	function it_should_throw_an_exception_if_unknown_visibility()
-	{
-		$this->beConstructedWith('CONST_NAME', 'Hello', 'World');
-		$this->shouldThrow(EnumaException::class)->duringInstantiation();
-	}
+    function it_should_fallback_to_no_visibility_if_unknown_visibility()
+    {
+        $this->beConstructedWith('CONST_NAME', 'Hello', 'random_visibility');
+        $this->getName()->shouldBe('CONST_NAME');
+        $this->getValue()->shouldBe('Hello');
+        $this->getVisibility()->shouldBe(VisibilityHint::NONE);
+    }
 }

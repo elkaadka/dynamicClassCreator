@@ -16,11 +16,12 @@ trait Type
 
 	/**
 	 * @param string $type
+     * @param bool $isNullable
 	 * @return $this;
 	 */
-	public function setType(string $type)
+	public function setType(string $type, bool $isNullable = false)
 	{
-		$this->type = $type;
+		$this->type = ($isNullable? '?':'') . $type;
 
 		return $this;
 	}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kanel\Enuma\Helpers;
+namespace Kanel\Enuma\Helper;
 
 trait ValuePrinter
 {
