@@ -107,4 +107,18 @@ class MethodSpec extends ObjectBehavior
         $this->getVisibility()->shouldBe(VisibilityHint::PUBLIC);
         $this->getName()->shouldBe('name');
 	}
+
+    function it_should_be_possible_to_add_comments()
+    {
+        $this->beConstructedWith('name', VisibilityHint::PUBLIC);
+        $fooParameter = new Parameter('foor');
+        $barParameter = new Parameter('bar');
+
+        $this->setParameters([$fooParameter, $barParameter]);
+        $this->getParameters()->shouldIterateAs([$fooParameter, $barParameter]);
+        $this->getVisibility()->shouldBe(VisibilityHint::PUBLIC);
+        $this->getName()->shouldBe('name');
+        $this->setComment('This is my method comment');
+        $this->getComment()->shouldBe('This is my method comment');
+    }
 }

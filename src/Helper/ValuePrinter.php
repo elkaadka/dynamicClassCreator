@@ -2,19 +2,24 @@
 
 namespace Kanel\Enuma\Helper;
 
+use Kanel\Enuma\Hint\TypeHint;
+
 trait ValuePrinter
 {
-    public function printValue(string $value)
+    public function printValue(string $value, string $type = '')
     {
         if (
-            is_numeric($value) ||
-            in_array($value, ['true', 'false', 'null']) ||
-            strpos($value, 'array(') === 0 ||
-            strpos($value, '[') === 0
+            $type != TypeHint::STRING &&
+            (
+                is_numeric($value) ||
+                in_array($value, ['true', 'false', 'null']) ||
+                strpos($value, 'array(') === 0 ||
+                strpos($value, '[') === 0
+            )
         ) {
             return $value;
         }
 
-        return str_replace('\'', '\\\'', $value);
+        return "'" . str_replace('\'', '\\\'', $value) . "'";
     }
 }

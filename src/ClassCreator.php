@@ -17,23 +17,25 @@ class ClassCreator
     use CommentGeneration;
     use ValuePrinter;
 
-    const KEYWORD = 'class';
+    const ABSTRACT = 'abstract';
+    const FINAL = 'final';
 
-    const PHP_OPEN_TAG_SECTION = 0;
     const NAMESPACE_SECTION = 1;
     const USE_SECTION = 2;
     const CLASS_COMMENT_SECTION = 3;
-    const CLASS_TYPE_SECTION = 4;
-    const CLASS_DECLARATION_SECTION = 5;
-    const CLASS_EXTENDS_SECTION = 6;
-    const CLASS_IMPLEMENTS_SECTION = 7;
-    const TRAIT_SECTION = 8;
-    const CONST_SECTION = 9;
-    const PROPERTIES_SECTION = 10;
-    const METHODS_SECTION = 11;
-    const CLASS_END_SECTION = 12;
-    const LINE_FEED = 13;
-    const PHP_CLOSE_TAG_SECTION0 = 14;
+    const CLASS_FINAL_ABSTRACT_SECTION = 4;
+    const CLASS_NAME = 5;
+    const CLASS_TYPE_SECTION = 6;
+    const CLASS_EXTENDS_SECTION = 7;
+    const CLASS_IMPLEMENTS_SECTION = 8;
+    const CLASS_IMPLEMENTED_CLASSES_SECTION = 9;
+    const TRAIT_SECTION = 11;
+    const CONST_SECTION = 12;
+    const PROPERTIES_SECTION = 13;
+    const METHODS_SECTION = 14;
+    const CLASS_END_SECTION = 15;
+    const LINE_FEED = 16;
+    const PHP_CLOSE_TAG_SECTION0 = 17;
 
     protected $sections = [];
     protected $codingStyle;
@@ -49,16 +51,24 @@ class ClassCreator
     public function __construct(CodingStyle $codingStyle = null)
     {
         $this->codingStyle = $codingStyle ?? new Psr2();
-
-        $this->sections[self::PHP_OPEN_TAG_SECTION] = '<?php'
-            . $this->codingStyle->getNewLine()
-        ;
-
-        $this->sections[self::PHP_CLOSE_TAG_SECTION0] = '';
-
-        if ($this->codingStyle->usePhpClosingTag()) {
-            $this->sections[self::PHP_CLOSE_TAG_SECTION0] = $this->codingStyle->getNewLine() . "?>";
-        }
+        $this->sections = [
+            static::NAMESPACE_SECTION => '',
+            static::USE_SECTION => [],
+            static::CLASS_COMMENT_SECTION => '',
+            static::CLASS_FINAL_ABSTRACT_SECTION => '',
+            static::CLASS_TYPE_SECTION => '',
+            static::CLASS_NAME => '',
+            static::CLASS_EXTENDS_SECTION => '',
+            static::CLASS_IMPLEMENTS_SECTION => '',
+            static::CLASS_IMPLEMENTED_CLASSES_SECTION => [],
+            static::TRAIT_SECTION => [],
+            static::CONST_SECTION => [],
+            static::PROPERTIES_SECTION => [],
+            static::METHODS_SECTION => [],
+            static::CLASS_END_SECTION => '}',
+            static::LINE_FEED => '',
+            static::PHP_CLOSE_TAG_SECTION0 => '?>',
+        ];
     }
 
     public function getCodingStyle(): CodingStyle
@@ -68,42 +78,40 @@ class ClassCreator
 
     public function namespace(string $namespace)
     {
-        $this->sections[self::NAMESPACE_SECTION] = $this->codingStyle->getNewLine() .
-            'namespace ' . $namespace . ';' .
-            $this->codingStyle->getNewLine() .
-            $this->codingStyle->getNewLine();
+        $this->sections[static::NAMESPACE_SECTION] = "namespace $namespace;";
+
+        return $this;
     }
 
-    public function use(string $class)
+    public function use(string...$classes)
     {
-        $this->sections[self::USE_SECTION] = $this->sections[self::USE_SECTION] ?? '';
-        $this->sections[self::USE_SECTION] .= 'use ' . $class . ';' .
-            $this->codingStyle->getNewLine() .
-            $this->codingStyle->getNewLine();
-    }
-
-    public function class(string $name)
-    {
-        $this->sections[self::CLASS_DECLARATION_SECTION] = self::KEYWORD . ' ' . $name .
-            ($this->codingStyle->isClassBracesInNewLine()? $this->codingStyle->getNewLine() : "") .
-            "{" .
-            $this->codingStyle->getNewLine();
-
-        $this->sections[self::CLASS_END_SECTION] = '}' . $this->codingStyle->getNewLine();
-
-        if ($this->codingStyle->useUnixLineFeedEnding()) {
-            $this->sections[self::LINE_FEED] = $this->sections[self::LINE_FEED] ?? $this->codingStyle->getNewLine();
+        foreach ($classes as $class) {
+            $this->sections[static::USE_SECTION][$class] = "use $class;";
         }
+
+        return $this;
     }
 
     public function abstract()
     {
-        $this->sections[self::CLASS_TYPE_SECTION] = 'abstract ';
+        $this->sections[static::CLASS_FINAL_ABSTRACT_SECTION] = 'abstract ';
+
+        return $this;
     }
 
     public function final()
     {
-        $this->sections[self::CLASS_TYPE_SECTION] = 'final ';
+        $this->sections[static::CLASS_FINAL_ABSTRACT_SECTION] = 'final ';
+
+        return $this;
+    }
+
+    public function class(string $name)
+    {
+        $this->sections[static::CLASS_TYPE_SECTION] = 'class';
+        $this->sections[static::CLASS_NAME] = $name;
+
+        return $this;
     }
 
     public function extends(string $className)
@@ -114,151 +122,287 @@ class ClassCreator
             $this->use($namespace);
         }
 
-        $this->sections[self::CLASS_EXTENDS_SECTION] = ' extends' . $class;
+        $this->sections[static::CLASS_EXTENDS_SECTION] = "extends $class";
+
+        return $this;
     }
 
-    public function implements(string $className)
+    public function implements(string...$interfaces)
     {
-        $this->sections[self::CLASS_IMPLEMENTS_SECTION] = $this->sections[self::CLASS_IMPLEMENTS_SECTION]? ', ' : ' implements ';
+        $this->sections[static::CLASS_IMPLEMENTS_SECTION] = 'implements';
 
-        list($namespace, $class) = $this->extractType($className);
-
-        if ($namespace) {
-            $this->use($namespace);
-        }
-
-        $this->sections[self::CLASS_EXTENDS_SECTION] .=  $class;
-    }
-
-    public function comment(string $comment)
-    {
-        $this->sections[self::CLASS_COMMENT_SECTION] = $this->generateDocComment($comment, null, $this->codingStyle->getNewLine()) .
-            $this->codingStyle->getNewLine()
-        ;
-    }
-
-    public function useTrait(string $trait)
-    {
-        $this->sections[self::TRAIT_SECTION] = $this->sections[self::TRAIT_SECTION] ?? '';
-
-        list($namespace, $trait) = $this->extractType($trait);
-
-        if ($namespace) {
-            $this->use($namespace);
-        }
-
-        if ($trait) {
-            $this->sections[self::TRAIT_SECTION] .= 'use' . $trait . $this->codingStyle->getNewLine();
-        }
-    }
-
-    public function addProperty(Property $property)
-    {
-        $this->sections[self::PROPERTIES_SECTION] = $this->sections[self::PROPERTIES_SECTION] ?? '';
-
-        $this->sections[self::PROPERTIES_SECTION] .= $this->generateDocComment(
-            $property->getComment(),
-            $this->codingStyle->getIndentation(),
-            $this->codingStyle->getNewLine()
-        ) . $this->codingStyle->getIndentation()
-            . ($property->getVisibility()? $property->getVisibility() . ' ' : '')
-            . ($property->isStatic() ? 'static ' : '')
-            . ' $' . $property->getName()
-            . ($property->getDefaultValue() ? ' = ' . $this->printValue($property->getDefaultValue()) : '')
-            . ';'
-            . $this->codingStyle->getNewLine()
-        ;
-    }
-
-    public function addConst(Constant $const)
-    {
-        $this->sections[self::CONST_SECTION] = $this->sections[self::CONST_SECTION] ?? '';
-
-        $this->sections[self::CONST_SECTION] .= $this->generateDocComment(
-                $const->getComment(),
-                $this->codingStyle->getIndentation(),
-                $this->codingStyle->getNewLine()
-            ) . $this->codingStyle->getIndentation()
-            . ($const->getVisibility()? $const->getVisibility() . ' ' : '')
-            . 'const ' . $const->getName()
-            . ' = ' . $this->printValue($const->getValue())
-            . ';'
-            . $this->codingStyle->getNewLine()
-        ;
-    }
-
-    public function addFunction(Method $function)
-    {
-        $this->sections[self::METHODS_SECTION] = $this->sections[self::METHODS_SECTION] ?
-            $this->sections[self::METHODS_SECTION] . $this->codingStyle->getNewLine() . $this->codingStyle->getNewLine() : '';
-
-        $comment = $function->getComment();
-        $stringParameters = '';
-		$stringReturnType = '';
-
-        foreach ($function->getParameters() as $parameter) {
-
-            list($namespace, $type) = $this->extractType($parameter->getType());
+        foreach ($interfaces as $interface) {
+            list($namespace, $class) = $this->extractType($interface);
 
             if ($namespace) {
                 $this->use($namespace);
             }
 
-            $stringParameters .= ($type? $type . ' ' : '')
-                . '$' . $parameter->getName()
-                . ($parameter->getDefaultValue()? ' = ' . $this->printValue($parameter->getDefaultValue()) : '')
-                . ', ';
-
-
-            $comment .= $this->codingStyle->getNewLine() . '@param ' . $type ;
+            $this->sections[static::CLASS_IMPLEMENTED_CLASSES_SECTION][] =  $class;
         }
 
-        list($namespace, $type) = $this->extractType($function->getReturnType());
+        return $this;
+    }
 
-        if ($namespace) {
-            $this->use($namespace);
+    public function comment(string $comment)
+    {
+        $this->sections[static::CLASS_COMMENT_SECTION] = $this->generateDocComment($comment, '', $this->codingStyle->getNewLine());
+
+        return $this;
+    }
+
+    public function useTraits(string...$traits)
+    {
+        foreach ($traits as $trait) {
+            list($namespace, $trait) = $this->extractType($trait);
+
+            if ($namespace) {
+                $this->use($namespace);
+            }
+
+            $this->sections[static::TRAIT_SECTION][] = "use $trait;";
         }
 
-        if ($type) {
-           $stringReturnType = '? ' . $type;
-           $comment .= $this->codingStyle->getNewLine() . '@return ' . $type ;
-        }
+        return $this;
+    }
 
-        $comment .= $this->codingStyle->getNewLine() . '@param ' . $type ;
+    public function addConst(Constant $const)
+    {
+        $this->sections[static::CONST_SECTION][] = $const;
 
-        $this->sections[self::METHODS_SECTION] .= $this->generateDocComment(
-                $comment,
-                $this->codingStyle->getIndentation(),
-                $this->codingStyle->getNewLine()
-            ) . $this->codingStyle->getIndentation()
-            . ($function->isAbstract() ? 'abstract ' : '')
-            . ($function->isFinal() ? 'final ' : '')
-            . ($function->getVisibility() ? $function->getVisibility()  . ' ' : '')
-            . ($function->isStatic() ? 'static ' : '')
-            . 'function '
-            . $function->getName()
-            . '('
-            . rtrim($stringParameters, ', ')
-            . ')'
-            . $stringReturnType
-            . (
-					($this instanceof InterfaceCreator || trim($function->isAbstract()) == 'abstract') ? ';' :
-                    ($this->codingStyle->isMethodBracesInNewLine()? $this->codingStyle->getNewLine() : '')
-                    . '{'
-                    . $this->codingStyle->getNewLine()
-                    . $this->codingStyle->getNewLine()
-                    . '}'
-            );
-        ;
+        return $this;
+    }
+
+    public function addProperty(Property $property)
+    {
+        $this->sections[static::PROPERTIES_SECTION][] = $property;
+
+        return $this;
+    }
+
+    public function addFunction(Method $function)
+    {
+        $this->sections[static::METHODS_SECTION][] = $function;
+
+        return $this;
     }
 
     public function toString() : string
     {
-        print_r($this->sections);
-        return array_reduce($this->sections, function($carry, $section) {
-            $carry .= $section;
-            return $carry;
-        }, '');
+        $classContent = '';
+
+        if ( $this->sections[static::CLASS_NAME]) {
+            $classContent .= rtrim(
+                $this->sections[static::CLASS_COMMENT_SECTION]
+                . rtrim(
+                    $this->sections[static::CLASS_FINAL_ABSTRACT_SECTION]
+                    . $this->sections[static::CLASS_TYPE_SECTION] . ' '
+                    . $this->sections[static::CLASS_NAME] . ' '
+                    . $this->sections[static::CLASS_EXTENDS_SECTION]
+                    . ($this->sections[static::CLASS_EXTENDS_SECTION] ? ' ' : '')
+                    . $this->sections[static::CLASS_IMPLEMENTS_SECTION]
+                    . ($this->sections[static::CLASS_IMPLEMENTS_SECTION] ? ' ' : '')
+                    . implode(', ', $this->sections[static::CLASS_IMPLEMENTED_CLASSES_SECTION])
+                )
+                . ($this->codingStyle->isClassBracesInNewLine()? $this->codingStyle->getNewLine() : "")
+                . '{'
+            );
+
+            if ($this->sections[static::TRAIT_SECTION]) {
+                $classContent .= $this->codingStyle->getNewLine()
+                    . $this->codingStyle->getIndentation()
+                    . implode(
+                        $this->codingStyle->getNewLine() . $this->codingStyle->getIndentation(),
+                        $this->sections[static::TRAIT_SECTION]
+                    )
+                    . $this->codingStyle->getNewLine()
+                ;
+            }
+
+            if ($this->sections[static::CONST_SECTION]) {
+                $classContent .= rtrim(
+                    $this->codingStyle->getNewLine()
+                    . array_reduce(
+                        $this->sections[static::CONST_SECTION],
+                        function($carry, $const) {
+
+                            $comment = $this->generateDocComment(
+                                $const->getComment(),
+                                $this->codingStyle->getIndentation(),
+                                $this->codingStyle->getNewLine()
+                            );
+
+                            //if there are comments in the second const (or above) add an extra new line between constants
+                            if (!empty($carry) && $comment) {
+                                $comment = $this->codingStyle->getNewLine() . $comment;
+                            }
+
+
+                            $carry .=  $comment
+                                . $this->codingStyle->getIndentation()
+                                . ($const->getVisibility()? $const->getVisibility() . ' ' : '')
+                                . 'const ' . $const->getName()
+                                . ' = ' . $this->printValue($const->getValue())
+                                . ';'
+                                . $this->codingStyle->getNewLine()
+                            ;
+
+                            return $carry;
+                        },
+                        ''
+                    )
+                ) . $this->codingStyle->getNewLine();
+            }
+
+            if ($this->sections[static::PROPERTIES_SECTION]) {
+                $classContent .= rtrim(
+                    $this->codingStyle->getNewLine()
+                    . array_reduce(
+                        $this->sections[static::PROPERTIES_SECTION],
+                        function($carry, $property) {
+
+                            $comment = $this->generateDocComment(
+                                $property->getComment(),
+                                $this->codingStyle->getIndentation(),
+                                $this->codingStyle->getNewLine()
+                            );
+
+                            //if there are comments in the second const (or above) add an extra new line between constants
+                            if (!empty($carry) && $comment) {
+                                $comment = $this->codingStyle->getNewLine() . $comment;
+                            }
+
+                            $carry .= $comment
+                            . $this->codingStyle->getIndentation()
+                            . ($property->getVisibility()? $property->getVisibility() . ' ' : '')
+                            . ($property->isStatic() ? 'static ' : '')
+                            . '$' . $property->getName()
+                            . ($property->getValue() ? ' = ' . $this->printValue($property->getValue()) : '')
+                            . ';'
+                            . $this->codingStyle->getNewLine()
+                            ;
+
+                            return $carry;
+                        },
+                        ''
+                    )
+                );
+            }
+
+            if($this->sections[static::METHODS_SECTION]) {
+
+
+                $classContent .= $this->codingStyle->getNewLine()
+                    . rtrim(
+                        array_reduce(
+                            $this->sections[static::METHODS_SECTION],
+                            function($carry, $function) {
+
+                                $parameterString = '';
+                                $functionComment = $function->getComment();
+
+                                foreach ($function->getParameters() as $parameter) {
+
+                                    list($namespace, $type) = $this->extractType($parameter->getType());
+
+                                    if ($namespace) {
+                                        $this->use($namespace);
+                                    }
+
+                                    $parameterString .= ($type? $type . ' ' : '')
+                                        . '$' . $parameter->getName()
+                                        . ($parameter->getValue()? ' = ' . $this->printValue($parameter->getValue(), $parameter->getType()) : '')
+                                        . ', ';
+
+                                    $functionComment .= $this->codingStyle->getNewLine() . '@param ' . $type ;
+                                }
+
+                                $returnType = $function->getType();
+                                if ($returnType) {
+                                    list($namespace, $returnType) = $this->extractType($returnType);
+                                    if ($namespace) {
+                                        $this->use($namespace);
+                                    }
+
+                                    $functionComment .= $this->codingStyle->getNewLine()
+                                        . '@return '
+                                        . ($returnType? : 'mixed');
+                                }
+
+                                $comment = $this->generateDocComment(
+                                    $functionComment,
+                                    $this->codingStyle->getIndentation(),
+                                    $this->codingStyle->getNewLine()
+                                );
+
+                                $carry .= rtrim(
+                                    $this->codingStyle->getNewLine()
+                                    . $comment
+                                    . $this->codingStyle->getIndentation()
+                                    . ($function->isAbstract() ? 'abstract ' : '')
+                                    . ($function->isFinal() ? 'final ' : '')
+                                    . ($function->getVisibility() ? $function->getVisibility()  . ' ' : '')
+                                    . ($function->isStatic() ? 'static ' : '')
+                                    . 'function '
+                                    . $function->getName()
+                                    . '('
+                                    . rtrim($parameterString, ', ')
+                                    . ')'
+                                    . ($returnType? ': ' . $returnType : '')
+                                    . (
+                                    ($this instanceof InterfaceCreator || $function->isAbstract()) ? ';' :
+                                        ($this->codingStyle->isMethodBracesInNewLine()? $this->codingStyle->getNewLine() : '')
+                                        . $this->codingStyle->getIndentation()
+                                        . '{'
+                                        . $this->codingStyle->getNewLine()
+                                        . $this->codingStyle->getNewLine()
+                                        . $this->codingStyle->getIndentation()
+                                        . '}'
+                                    )
+                                ) . $this->getCodingStyle()->getNewLine();
+
+                                return $carry;
+                            },
+                            ''
+                        )
+                    );
+
+            }
+
+            $classContent = rtrim($classContent) . $this->codingStyle->getNewLine()
+                . '}'
+                . $this->codingStyle->getNewLine();
+        }
+
+        $phpFileContent = '<?php'
+            . $this->codingStyle->getNewLine()
+            . $this->codingStyle->getNewLine();
+
+        if ($this->sections[static::NAMESPACE_SECTION]) {
+            $phpFileContent .= $this->sections[static::NAMESPACE_SECTION]
+                . $this->codingStyle->getNewLine()
+                . $this->codingStyle->getNewLine();
+        }
+
+        if ($this->sections[static::USE_SECTION]) {
+            $phpFileContent .= array_reduce($this->sections[static::USE_SECTION], function($carry, $section) {
+                    $carry .= $section . $this->codingStyle->getNewLine();
+                    return $carry;
+                }, '')
+                . $this->codingStyle->getNewLine();
+        }
+
+        $phpFileContent .= $classContent;
+
+        if (substr($phpFileContent, -2) !== "\n\n" && $this->codingStyle->useUnixLineFeedEnding()) {
+            $phpFileContent .= $this->codingStyle->getNewLine();
+        }
+
+        if ($this->codingStyle->usePhpClosingTag()) {
+            $phpFileContent .= "\n?>";
+        }
+
+        return $phpFileContent;
     }
 
     public function __toString()

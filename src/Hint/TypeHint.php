@@ -13,5 +13,6 @@ class TypeHint extends Hint
 	const STDCLASS = 'stdClass';
 	const SELF = 'self';
 	const PARENT = 'parent';
-	const OBJECT = 'object';
+    const OBJECT = 'object';
+    const NONE = '';
 }

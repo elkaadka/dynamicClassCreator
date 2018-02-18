@@ -31,4 +31,12 @@ class ParameterSpec extends ObjectBehavior
 		$this->getType()->shouldBe('string');
 		$this->getValue()->shouldBe('null');
 	}
+
+    function it_should_be_possible_to_add_comments()
+    {
+        $this->beConstructedWith('foo', 'bool', 'true');
+
+        $this->setComment('This is my method comment');
+        $this->getComment()->shouldBe('This is my method comment');
+    }
 }

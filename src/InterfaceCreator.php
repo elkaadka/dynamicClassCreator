@@ -8,58 +8,40 @@ use Kanel\Enuma\Exception\EnumaException;
 
 class InterfaceCreator extends ClassCreator
 {
-    const KEYWORD = 'interface';
+    public function class(string $name)
+    {
+        $this->sections[static::CLASS_TYPE_SECTION] = 'interface';
+        $this->sections[static::CLASS_NAME] = $name;
+    }
 
-    /**
-     * @throws EnumaException
-     */
     public function makeAbstract()
     {
-        throw new EnumaException('interfaces cannot be abstract');
+        return;
     }
 
-    /**
-     * @throws EnumaException
-     */
     public function makeFinal()
     {
-        throw new EnumaException('interfaces cannot be final');
+        return;
     }
 
-    /**
-     * @param string $className
-     * @throws EnumaException
-     */
     public function extends(string $className)
     {
-        throw new EnumaException('interfaces cannot extend classes');
+        return;
     }
 
-    /**
-     * @param string $className
-     * @throws EnumaException
-     */
     public function implements(string $className)
     {
-        throw new EnumaException('interfaces cannot implement other interfaces');
+        return;
     }
 
-    /**
-     * @param string $trait
-     * @throws EnumaException
-     */
     public function useTrait(string $trait)
     {
-        throw new EnumaException('interfaces cannot be traits');
+        return;
     }
 
-    /**
-     * @param Property $property
-     * @throws EnumaException
-     */
     public function addProperty(Property $property)
     {
-        throw new EnumaException('interfaces cannot have properties');
+        return;
     }
 
     /**
