@@ -31,14 +31,4 @@ class ConstantSpec extends ObjectBehavior
         $this->getValue()->shouldBe('Hello');
         $this->getVisibility()->shouldBe(VisibilityHint::NONE);
     }
-
-    function it_should_be_possible_to_add_comments()
-    {
-        $this->beConstructedWith('CONST_NAME', 'Hello', 'random_visibility');
-        $this->getName()->shouldBe('CONST_NAME');
-        $this->getValue()->shouldBe('Hello');
-        $this->getVisibility()->shouldBe(VisibilityHint::NONE);
-        $this->setComment('This is my const comment');
-        $this->getComment()->shouldBe('This is my const comment');
-    }
 }

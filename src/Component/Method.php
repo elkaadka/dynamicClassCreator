@@ -9,13 +9,13 @@ use Kanel\Enuma\Component\Atoms\Name;
 use Kanel\Enuma\Component\Atoms\Static_;
 use Kanel\Enuma\Component\Atoms\Type;
 use Kanel\Enuma\Component\Atoms\Visibility;
-use Kanel\Enuma\Definition\Abstractable;
-use Kanel\Enuma\Definition\Commentable;
-use Kanel\Enuma\Definition\Finalable;
-use Kanel\Enuma\Definition\Nameable;
-use Kanel\Enuma\Definition\Staticable;
-use Kanel\Enuma\Definition\Typable;
-use Kanel\Enuma\Definition\Visible;
+use Kanel\Enuma\Component\Definition\Abstractable;
+use Kanel\Enuma\Component\Definition\Commentable;
+use Kanel\Enuma\Component\Definition\Finalable;
+use Kanel\Enuma\Component\Definition\Nameable;
+use Kanel\Enuma\Component\Definition\Staticable;
+use Kanel\Enuma\Component\Definition\Typable;
+use Kanel\Enuma\Component\Definition\Visible;
 
 class Method extends Component implements Nameable, Visible, Typable, Abstractable, Finalable, Staticable, Commentable
 {

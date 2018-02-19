@@ -2,24 +2,21 @@
 
 namespace Kanel\Enuma\Component;
 
-use Kanel\Enuma\Component\Atoms\Comment;
 use Kanel\Enuma\Component\Atoms\Name;
 use Kanel\Enuma\Component\Atoms\Static_;
 use Kanel\Enuma\Component\Atoms\Value;
 use Kanel\Enuma\Component\Atoms\Visibility;
-use Kanel\Enuma\Definition\Commentable;
-use Kanel\Enuma\Definition\Nameable;
-use Kanel\Enuma\Definition\Staticable;
-use Kanel\Enuma\Definition\Valuable;
-use Kanel\Enuma\Definition\Visible;
+use Kanel\Enuma\Component\Definition\Nameable;
+use Kanel\Enuma\Component\Definition\Staticable;
+use Kanel\Enuma\Component\Definition\Valuable;
+use Kanel\Enuma\Component\Definition\Visible;
 
-class Property extends Component implements Nameable, Visible, Valuable, Staticable, Commentable
+class Property extends Component implements Nameable, Visible, Valuable, Staticable
 {
     use Name;
     use Visibility;
     use Value;
     use Static_;
-    use Comment;
 
     public function __construct(string $name, string $visibility, string $defaultValue = null, bool $isStatic = false)
     {

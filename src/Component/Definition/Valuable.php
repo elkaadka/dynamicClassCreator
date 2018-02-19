@@ -1,6 +1,6 @@
 <?php
 
-namespace Kanel\Enuma\Definition;
+namespace Kanel\Enuma\Component\Definition;
 
 interface Valuable
 {

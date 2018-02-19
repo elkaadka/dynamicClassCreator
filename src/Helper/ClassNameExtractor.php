@@ -4,7 +4,7 @@ namespace Kanel\Enuma\Helper;
 
 trait ClassNameExtractor
 {
-    protected function extractType(string $class)
+    protected static function extractType(string $class)
     {
         $namespace = '';
 

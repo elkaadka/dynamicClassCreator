@@ -35,8 +35,8 @@ class ClassCreatorSpec extends ObjectBehavior
 
     function it_should_be_possible_add_namespaces()
     {
-        $this->namespace('spec\Kanel\Enuma');
-        $this->toString()->shouldReturn(
+		$this->namespace('spec\Kanel\Enuma');
+		$this->toString()->shouldReturn(
 '<?php
 
 namespace spec\Kanel\Enuma;
@@ -62,7 +62,7 @@ namespace spec\Kanel\Enuma;
     {
         $this->namespace('spec\Kanel\Enuma');
         $this->use('Prophecy\Argument');
-        $this->toString()->shouldReturn(
+		$this->toString()->shouldReturn(
             '<?php
 
 namespace spec\Kanel\Enuma;
@@ -214,13 +214,13 @@ final class Foo extends ClassCreatorSpec
 
     function it_should_be_possible_to_add_a_single_line_class_comment()
     {
-        $this->namespace('spec\Kanel\Enuma');
-        $this->use('Prophecy\Argument');
-        $this->class('Foo');
-        $this->final();
-        $this->comment('This is my comment and it takes one line');
-        $this->extends(self::class);
-        $this->toString()->shouldReturn(
+		$this->namespace('spec\Kanel\Enuma');
+		$this->use('Prophecy\Argument');
+		$this->class('Foo');
+		$this->final();
+		$this->comment('This is my comment and it takes one line');
+		$this->extends(self::class);
+		$this->toString()->shouldReturn(
             '<?php
 
 namespace spec\Kanel\Enuma;
@@ -339,7 +339,7 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->extends(self::class);
         $this->implements(Finalable::class);
         $this->useTraits(Final_::class);
-        $this->toString()->shouldReturn(
+		$this->toString()->shouldReturn(
             '<?php
 
 namespace spec\Kanel\Enuma;
@@ -408,7 +408,9 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->extends(self::class);
         $this->implements(Finalable::class, Nameable::class);
         $this->addConst(new Constant('MY_CONST', 'true'));
-        $this->toString()->shouldReturn(
+		echo $this->toString()->getWrappedObject();exit;
+
+		$this->toString()->shouldReturn(
             '<?php
 
 namespace spec\Kanel\Enuma;
@@ -467,160 +469,6 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     const MY_FIRST_CONST = true;
     const MY_SECOND_CONST = \'Hello\';
-}
-
-'
-        );
-    }
-
-        function it_should_be_possible_to_add_comments_to_constants()
-        {
-            $this->namespace('spec\Kanel\Enuma');
-            $this->use('Prophecy\Argument');
-            $this->class('Foo');
-            $this->final();
-            $this->comment('This is my comment'."\n"."and this the rest");
-            $this->extends(self::class);
-            $this->implements(Finalable::class, Nameable::class);
-            $this->useTraits(Final_::class, Name::class);
-            $constant = new Constant('MY_FIRST_CONST', 'true');
-            $constant->setComment('A fake constant');
-            $this->addConst($constant);
-            $this->toString()->shouldReturn(
-                '<?php
-
-namespace spec\Kanel\Enuma;
-
-use Prophecy\Argument;
-use spec\Kanel\Enuma\ClassCreatorSpec;
-use Kanel\Enuma\Definition\Finalable;
-use Kanel\Enuma\Definition\Nameable;
-use Kanel\Enuma\Component\Atoms\Final_;
-use Kanel\Enuma\Component\Atoms\Name;
-
-/**
- * This is my comment
- * and this the rest
- */
-final class Foo extends ClassCreatorSpec implements Finalable, Nameable
-{
-    use Final_;
-    use Name;
-
-    /**
-     * A fake constant
-     */
-    const MY_FIRST_CONST = true;
-}
-
-'
-            );
-    }
-
-    function it_should_be_possible_to_add_comments_to_all_constants()
-    {
-        $this->namespace('spec\Kanel\Enuma');
-        $this->use('Prophecy\Argument');
-        $this->class('Foo');
-        $this->final();
-        $this->comment('This is my comment'."\n"."and this the rest");
-        $this->extends(self::class);
-        $this->implements(Finalable::class, Nameable::class);
-        $this->useTraits(Final_::class, Name::class);
-
-        $constant = new Constant('MY_FIRST_CONST', 'true');
-        $constant->setComment('A fake constant');
-        $this->addConst($constant);
-
-        $constant2 = new Constant('MY_FIRST_CONST', 'true');
-        $constant2->setComment('Another fake constant');
-        $this->addConst($constant2);
-
-        $this->toString()->shouldReturn(
-            '<?php
-
-namespace spec\Kanel\Enuma;
-
-use Prophecy\Argument;
-use spec\Kanel\Enuma\ClassCreatorSpec;
-use Kanel\Enuma\Definition\Finalable;
-use Kanel\Enuma\Definition\Nameable;
-use Kanel\Enuma\Component\Atoms\Final_;
-use Kanel\Enuma\Component\Atoms\Name;
-
-/**
- * This is my comment
- * and this the rest
- */
-final class Foo extends ClassCreatorSpec implements Finalable, Nameable
-{
-    use Final_;
-    use Name;
-
-    /**
-     * A fake constant
-     */
-    const MY_FIRST_CONST = true;
-
-    /**
-     * Another fake constant
-     */
-    const MY_FIRST_CONST = true;
-}
-
-'
-        );
-    }
-
-    function it_should_correctly_print_const_if_second_one_has_comment()
-    {
-        $this->namespace('spec\Kanel\Enuma');
-        $this->use('Prophecy\Argument');
-        $this->class('Foo');
-        $this->final();
-        $this->comment('This is my comment'."\n"."and this the rest");
-        $this->extends(self::class);
-        $this->implements(Finalable::class, Nameable::class);
-        $this->useTraits(Final_::class, Name::class);
-
-        $constant = new Constant('MY_FIRST_CONST', 'true');
-        $this->addConst($constant);
-
-        $constant3 = new Constant('MY_FIRST_CONST', 'true');
-        $constant3->setComment('my fake constant');
-        $this->addConst($constant3);
-
-        $constant2 = new Constant('MY_FIRST_CONST', 'true');
-        $this->addConst($constant2);
-
-        $this->toString()->shouldReturn(
-            '<?php
-
-namespace spec\Kanel\Enuma;
-
-use Prophecy\Argument;
-use spec\Kanel\Enuma\ClassCreatorSpec;
-use Kanel\Enuma\Definition\Finalable;
-use Kanel\Enuma\Definition\Nameable;
-use Kanel\Enuma\Component\Atoms\Final_;
-use Kanel\Enuma\Component\Atoms\Name;
-
-/**
- * This is my comment
- * and this the rest
- */
-final class Foo extends ClassCreatorSpec implements Finalable, Nameable
-{
-    use Final_;
-    use Name;
-
-    const MY_FIRST_CONST = true;
-
-    /**
-     * my fake constant
-     */
-    const MY_FIRST_CONST = true;
-    const MY_FIRST_CONST = true;
 }
 
 '
@@ -1280,9 +1128,9 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my cool function
-     * @param string
-     * @param 
-     * @param VisibilityHint
+     * @param string $param1
+     * @param mixed $param2
+     * @param VisibilityHint $param3
      * @return TypeHint
      */
     public function sayHello(string $param1 = \'true\', $param2 = true, VisibilityHint $param3 = null): TypeHint

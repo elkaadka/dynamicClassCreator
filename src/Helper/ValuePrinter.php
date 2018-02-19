@@ -6,7 +6,7 @@ use Kanel\Enuma\Hint\TypeHint;
 
 trait ValuePrinter
 {
-    public function printValue(string $value, string $type = '')
+    public static function printValue(string $value, string $type = '')
     {
         if (
             $type != TypeHint::STRING &&

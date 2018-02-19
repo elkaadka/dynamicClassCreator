@@ -21,8 +21,8 @@ class CustomCodingStyleSpec extends ObjectBehavior
 
     public function it_should_be_able_to_change_encoding()
     {
-        $this->setEncoding('ISO-8859-1')->shouldBeAnInstanceOf(CustomCodingStyle::class);
-        $this->getEncoding()->shouldReturn('ISO-8859-1');
+        $this->setEncoding('UTF-8')->shouldBeAnInstanceOf(CustomCodingStyle::class);
+        $this->getEncoding()->shouldReturn('UTF-8');
     }
 
     public function it_should_throw_an_exception_if_encoding_is_unkown()

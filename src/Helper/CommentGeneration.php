@@ -4,7 +4,7 @@ namespace Kanel\Enuma\Helper;
 
 trait CommentGeneration
 {
-    protected function generateDocComment(string $comment = null, string $indentation, string $newLine): string
+    protected static function generateDocComment(string $comment = null, string $indentation, string $newLine): string
     {
         if (!$comment) {
             return '';
