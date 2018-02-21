@@ -94,6 +94,7 @@ use PhpSpec\Wrapper\Subject;
         $this->namespace('spec\Kanel\Enuma');
         $this->use('Prophecy\Argument');
         $this->class('Foo');
+
         $this->toString()->shouldReturn(
             '<?php
 
@@ -408,8 +409,6 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->extends(self::class);
         $this->implements(Finalable::class, Nameable::class);
         $this->addConst(new Constant('MY_CONST', 'true'));
-		echo $this->toString()->getWrappedObject();exit;
-
 		$this->toString()->shouldReturn(
             '<?php
 
@@ -445,7 +444,6 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->useTraits(Final_::class, Name::class);
         $this->addConst(new Constant('MY_FIRST_CONST', 'true'));
         $this->addConst(new Constant('MY_SECOND_CONST', 'Hello'));
-
         $this->toString()->shouldReturn(
             '<?php
 
@@ -567,7 +565,6 @@ class Foo
         $this->comment('This is my comment'."\n"."and this the rest");
         $this->addProperty(new Property('test', VisibilityHint::PROTECTED));
         $this->addProperty(new Property('testTwo', VisibilityHint::PROTECTED));
-
         $this->toString()->shouldReturn(
             '<?php
 
@@ -658,7 +655,8 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->addProperty(new Property('test', VisibilityHint::PROTECTED));
         $this->addProperty(new Property('testTwo', VisibilityHint::PROTECTED));
 
-        $this->addFunction(new Method('sayHello', VisibilityHint::PUBLIC));
+        $this->addMethod(new Method('sayHello', VisibilityHint::PUBLIC));
+        echo $this->toString()->getWrappedObject();exit;
 
         $this->toString()->shouldReturn(
             '<?php
@@ -687,7 +685,10 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     protected $test;
     protected $testTwo;
-
+    
+    /*
+     * @return mixed
+     */
     public function sayHello()
     {
 
@@ -716,8 +717,8 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->addProperty(new Property('test', VisibilityHint::PROTECTED));
         $this->addProperty(new Property('testTwo', VisibilityHint::PROTECTED));
 
-        $this->addFunction(new Method('sayHello', VisibilityHint::PUBLIC));
-        $this->addFunction(new Method('Bar', VisibilityHint::PROTECTED));
+        $this->addMethod(new Method('sayHello', VisibilityHint::PUBLIC));
+        $this->addMethod(new Method('Bar', VisibilityHint::PROTECTED));
 
         $this->toString()->shouldReturn(
             '<?php
@@ -782,11 +783,11 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
         $method = new Method('sayHello', VisibilityHint::PUBLIC);
         $method->setComment('This is my cool function');
-        $this->addFunction($method);
+        $this->addMethod($method);
 
         $method2 = new Method('Bar', VisibilityHint::PROTECTED);
         $method2->setComment('This is my second cool function');
-        $this->addFunction($method2);
+        $this->addMethod($method2);
 
         $this->toString()->shouldReturn(
             '<?php
@@ -858,12 +859,12 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $method = new Method('sayHello', VisibilityHint::PUBLIC);
         $method->setComment('This is my cool function');
         $method->setIsAbstract(true);
-        $this->addFunction($method);
+        $this->addMethod($method);
 
         $method2 = new Method('Bar', VisibilityHint::PROTECTED);
         $method2->setComment('This is my second cool function');
         $method2->setIsFinal(true);
-        $this->addFunction($method2);
+        $this->addMethod($method2);
 
         $this->toString()->shouldReturn(
             '<?php
@@ -932,11 +933,11 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $method = new Method('sayHello', VisibilityHint::PUBLIC);
         $method->setComment('This is my cool function');
         $method->setType(TypeHint::ARRAY);
-        $this->addFunction($method);
+        $this->addMethod($method);
 
         $method2 = new Method('Bar', VisibilityHint::PROTECTED);
         $method2->setComment('This is my second cool function');
-        $this->addFunction($method2);
+        $this->addMethod($method2);
 
         $this->toString()->shouldReturn(
             '<?php
@@ -1009,11 +1010,11 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $method = new Method('sayHello', VisibilityHint::PUBLIC);
         $method->setComment('This is my cool function');
         $method->setType(TypeHint::class);
-        $this->addFunction($method);
+        $this->addMethod($method);
 
         $method2 = new Method('Bar', VisibilityHint::PROTECTED);
         $method2->setComment('This is my second cool function');
-        $this->addFunction($method2);
+        $this->addMethod($method2);
 
         $this->toString()->shouldReturn(
             '<?php
@@ -1090,11 +1091,11 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $method->addParameter(new Parameter('param1', TypeHint::STRING, 'true'));
         $method->addParameter(new Parameter('param2', TypeHint::NONE, 'true'));
         $method->addParameter(new Parameter('param3', VisibilityHint::class, 'null'));
-        $this->addFunction($method);
+        $this->addMethod($method);
 
         $method2 = new Method('Bar', VisibilityHint::PROTECTED);
         $method2->setComment('This is my second cool function');
-        $this->addFunction($method2);
+        $this->addMethod($method2);
 
         $this->toString()->shouldReturn(
             '<?php

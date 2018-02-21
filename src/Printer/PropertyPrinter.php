@@ -21,7 +21,7 @@ class PropertyPrinter implements Printable
         $_ = '';
 
         foreach ($propertySection as $property) {
-            $_ = $codingStyle->getIndentation()
+            $_ .= $codingStyle->getIndentation()
                 . ($property->getVisibility()? $property->getVisibility() . ' ' : '')
                 . ($property->isStatic() ? 'static ' : '')
                 . '$' . $property->getName()
@@ -31,6 +31,6 @@ class PropertyPrinter implements Printable
             ;
         }
 
-        return rtrim($_);
+        return  $_ . $codingStyle->getNewLine();
     }
 }

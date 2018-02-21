@@ -19,6 +19,6 @@ class TraitPrinter implements Printable
 			}
 		}
 
-		return $_;
+		return $_ . $codingStyle->getNewLine();
 	}
 }

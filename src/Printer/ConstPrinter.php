@@ -15,13 +15,14 @@ class ConstPrinter implements Printable
 	public static function print(Sections $sections, CodingStyle $codingStyle): string
 	{
 		$constSection = $sections->getSection(Sections::CONST_SECTION);
+
 		if (!$constSection) {
 			return '';
 		}
 
 		$_ = '';
 		foreach ($constSection as $const) {
-			$_ = $codingStyle->getIndentation()
+			$_ .= $codingStyle->getIndentation()
 				. ($const->getVisibility()? $const->getVisibility() . ' ' : '')
 				. 'const ' . $const->getName()
 				. ' = ' . self::printValue($const->getValue())
@@ -30,6 +31,6 @@ class ConstPrinter implements Printable
 			;
 		}
 
-		return $_;
+		return $_ . $codingStyle->getNewLine();
 	}
 }

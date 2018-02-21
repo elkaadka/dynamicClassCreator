@@ -28,6 +28,7 @@ class Method extends Component implements Nameable, Visible, Typable, Abstractab
 	use Comment;
 
     protected $parameters = [];
+    protected $useExtraComment = true;
 
     public function __construct(string $name, string $visibility)
     {
@@ -66,4 +67,25 @@ class Method extends Component implements Nameable, Visible, Typable, Abstractab
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasExtraComment(): bool
+    {
+        return $this->useExtraComment;
+    }
+
+    /**
+     * Set to true in order to automatically add comments about parameters and return type (@param and @return)
+     * @return Method
+     */
+    public function useExtraComment(bool $useExtraComment): Method
+    {
+        $this->useExtraComment = $useExtraComment;
+
+        return $this;
+    }
+
+
 }

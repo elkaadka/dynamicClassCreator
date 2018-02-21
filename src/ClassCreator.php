@@ -39,7 +39,7 @@ class ClassCreator
 
     public function namespace(string $namespace)
     {
-    	$this->sections->addSection(Sections::NAMESPACE_SECTION, $namespace);
+        $this->sections->addSection(Sections::NAMESPACE_SECTION, $namespace);
 
         return $this;
     }
@@ -47,7 +47,7 @@ class ClassCreator
     public function use(string...$classes)
     {
         foreach ($classes as $class) {
-			$this->sections->addSection(Sections::USE_SECTION, $class);
+            $this->sections->addSection(Sections::USE_SECTION, $class);
         }
 
         return $this;
@@ -55,22 +55,22 @@ class ClassCreator
 
     public function abstract()
     {
-		$this->sections->addSection(Sections::CLASS_FINAL_ABSTRACT_SECTION, 'abstract');
+        $this->sections->addSection(Sections::CLASS_FINAL_ABSTRACT_SECTION, 'abstract');
 
         return $this;
     }
 
     public function final()
     {
-		$this->sections->addSection(Sections::CLASS_FINAL_ABSTRACT_SECTION, 'final');
+        $this->sections->addSection(Sections::CLASS_FINAL_ABSTRACT_SECTION, 'final');
 
         return $this;
     }
 
     public function class(string $name)
     {
-		$this->sections->addSection(Sections::CLASS_TYPE_SECTION, 'class');
-		$this->sections->addSection(Sections::CLASS_NAME, $name);
+        $this->sections->addSection(Sections::CLASS_TYPE_SECTION, 'class');
+        $this->sections->addSection(Sections::CLASS_NAME, $name);
 
         return $this;
     }
@@ -83,7 +83,7 @@ class ClassCreator
             $this->use($namespace);
         }
 
-		$this->sections->addSection(Sections::CLASS_EXTENDS_SECTION, $class);
+        $this->sections->addSection(Sections::CLASS_EXTENDS_SECTION, $class);
 
         return $this;
     }
@@ -92,13 +92,13 @@ class ClassCreator
     {
         foreach ($interfaces as $interface) {
 
-        	list($namespace, $class) = self::extractType($interface);
+            list($namespace, $class) = self::extractType($interface);
 
             if ($namespace) {
                 $this->use($namespace);
             }
 
-			$this->sections->addSection(Sections::CLASS_IMPLEMENTED_CLASSES_SECTION, $class);
+            $this->sections->addSection(Sections::CLASS_IMPLEMENTED_CLASSES_SECTION, $class);
         }
 
         return $this;
@@ -106,7 +106,7 @@ class ClassCreator
 
     public function comment(string $comment)
     {
-		$this->sections->addSection(Sections::CLASS_COMMENT_SECTION, $comment);
+        $this->sections->addSection(Sections::CLASS_COMMENT_SECTION, $comment);
 
         return $this;
     }
@@ -120,7 +120,7 @@ class ClassCreator
                 $this->use($namespace);
             }
 
-			$this->sections->addSection(Sections::TRAIT_SECTION, $trait);
+            $this->sections->addSection(Sections::TRAIT_SECTION, $trait);
         }
 
         return $this;
@@ -128,73 +128,75 @@ class ClassCreator
 
     public function addConst(Constant $const)
     {
-		$this->sections->addSection(Sections::CONST_SECTION, $const);
+        $this->sections->addSection(Sections::CONST_SECTION, $const);
 
         return $this;
     }
 
     public function addProperty(Property $property)
     {
-		$this->sections->addSection(Sections::PROPERTIES_SECTION, $property);
+        $this->sections->addSection(Sections::PROPERTIES_SECTION, $property);
 
         return $this;
     }
 
-    public function addFunction(Method $function)
+    public function addMethod(Method $method)
     {
-		$extraComment = '';
-    	foreach ($function->getParameters() as $parameter) {
-			list($namespace, $type) = self::extractType($parameter->getType());
+        $extraComment = '';
+        foreach ($method->getParameters() as $parameter) {
+            list($namespace, $type) = self::extractType($parameter->getType());
 
-			if ($namespace) {
-				$this->use($namespace);
-			}
+            if ($namespace) {
+                $this->use($namespace);
+            }
 
-			$extraComment .= $this->codingStyle->getNewLine()
-				. '@param ' . ($type? : 'mixed')
-				. ' $'
-				. $parameter->getName();
+            $parameter->setType($type);
 
-			$parameter->setType($type);
-		}
+            if ($method->hasExtraComment()) {
+                $extraComment .= $this->codingStyle->getNewLine()
+                    . '@param ' . ($type? : 'mixed')
+                    . ' $'
+                    . $parameter->getName()
+                    . $this->codingStyle->getNewLine();
+            }
+        }
 
-		$returnType = $function->getType();
-		if ($returnType) {
-			list($namespace, $returnType) = self::extractType($returnType);
-			if ($namespace) {
-				$this->use($namespace);
-			}
-			$function->setType($returnType);
-		}
+        $returnType = $method->getType();
+        if ($returnType) {
+            list($namespace, $returnType) = self::extractType($returnType);
+            if ($namespace) {
+                $this->use($namespace);
+            }
+            $method->setType($returnType);
+        }
 
-		$extraComment .= $this->codingStyle->getNewLine()
-			. '@return '
-			. ($function->getType() ? : 'mixed');
+        if ($method->hasExtraComment()) {
+            $extraComment .= '@return '
+                . ($method->getType() ? : 'mixed');
+        }
 
-
-		$function->setComment($function->getComment() . $extraComment);
-		$this->sections->addSection(Sections::METHODS_SECTION, $function);
+        $method->setComment($method->getComment() . rtrim($extraComment));
+        $this->sections->addSection(Sections::METHODS_SECTION, $method);
 
         return $this;
     }
 
     public function toString() : string
     {
-        $content = StartTagPrinter::print($this->sections, $this->codingStyle);
-		$content .= NamespacePrinter::print($this->sections, $this->codingStyle);
-		$content .= UsePrinter::print($this->sections, $this->codingStyle);
+        $content = StartTagPrinter::print($this->sections, $this->codingStyle)
+            . NamespacePrinter::print($this->sections, $this->codingStyle)
+            . UsePrinter::print($this->sections, $this->codingStyle);
 
-		$class =  ClassPrinter::print($this->sections, $this->codingStyle);
-
-		if($class) {
-			$class .= TraitPrinter::print($this->sections, $this->codingStyle);
-			$class .= ConstPrinter::print($this->sections, $this->codingStyle);
-			$class .= PropertyPrinter::print($this->sections, $this->codingStyle);
-			$class .= FunctionPrinter::print($this->sections, $this->codingStyle);
-			$class = rtrim($class) . ClassEndPrinter::print($this->sections, $this->codingStyle);
-		}
-
-		$content .= $class;
+        //If a class was declared
+        if($this->sections->getSection(Sections::CLASS_NAME)) {
+            $content .=  rtrim(
+                ClassPrinter::print($this->sections, $this->codingStyle)
+                . TraitPrinter::print($this->sections, $this->codingStyle)
+                . ConstPrinter::print($this->sections, $this->codingStyle)
+                . PropertyPrinter::print($this->sections, $this->codingStyle)
+                . FunctionPrinter::print($this->sections, $this->codingStyle)
+            ) . ClassEndPrinter::print($this->sections, $this->codingStyle);
+        }
 
         if (substr($content, -2) !== "\n\n" && $this->codingStyle->useUnixLineFeedEnding()) {
             $content .= $this->codingStyle->getNewLine();
