@@ -2,8 +2,16 @@
 
 namespace Kanel\Enuma\CodingStyle;
 
-abstract class CodingStyle implements CodingStyleInterface
+
+use Kanel\Enuma\Component\Definition\Fake;
+use Kanel\Enuma\Helper\CommentGeneration;
+
+abstract class CodingStyle implements CodingStyleInterface, Fake
 {
+	use CommentGeneration;
+
+	const AAAA = 1;
+
     protected $encoding = 'UTF-8';
     protected $usePhpClosingTag = false;
     protected $indentation = '    ';

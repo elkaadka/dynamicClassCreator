@@ -1,16 +1,17 @@
 <?php
 
-namespace Kanel\Enuma\Printer;
+namespace Kanel\Enuma\Tokenizer\ClassTokenizer;
 
 use Kanel\Enuma\CodingStyle\CodingStyle;
 use Kanel\Enuma\Helper\CommentGeneration;
 use Kanel\Enuma\Sections;
+use Kanel\Enuma\Tokenizer\Tokenizable;
 
-class ClassEndPrinter implements Printable
+class ClassEndTokenizer implements Tokenizable
 {
 	use CommentGeneration;
 
-	public static function print(Sections $sections, CodingStyle $codingStyle): string
+	public static function getTokens(Sections $sections, CodingStyle $codingStyle): array
 	{
 		$classSection = $sections->getSection(Sections::CLASS_NAME);
 		if (!$classSection) {

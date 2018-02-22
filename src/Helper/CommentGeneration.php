@@ -12,7 +12,7 @@ trait CommentGeneration
 
         return
             $indentation . '/**' . $newLine .
-            $indentation . ' * ' .  str_replace("\n", "\n". $indentation ." * ", $comment) .
+            $indentation . ' * ' .  str_replace("\n", "\n". $indentation ." * ", trim($comment)) .
             $newLine .
             $indentation . ' */'. $newLine;
 

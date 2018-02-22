@@ -656,7 +656,6 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $this->addProperty(new Property('testTwo', VisibilityHint::PROTECTED));
 
         $this->addMethod(new Method('sayHello', VisibilityHint::PUBLIC));
-        echo $this->toString()->getWrappedObject();exit;
 
         $this->toString()->shouldReturn(
             '<?php
@@ -685,8 +684,8 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     protected $test;
     protected $testTwo;
-    
-    /*
+
+    /**
      * @return mixed
      */
     public function sayHello()
@@ -748,11 +747,17 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
     protected $test;
     protected $testTwo;
 
+    /**
+     * @return mixed
+     */
     public function sayHello()
     {
 
     }
 
+    /**
+     * @return mixed
+     */
     protected function Bar()
     {
 
@@ -762,6 +767,76 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 '
         );
     }
+
+	function it_should_be_possible_to_specify_that_we_dont_want_extra_functions_comments()
+	{
+		$this->namespace('spec\Kanel\Enuma');
+		$this->use('Prophecy\Argument');
+		$this->class('Foo');
+		$this->final();
+		$this->comment('This is my comment'."\n"."and this the rest");
+		$this->extends(self::class);
+		$this->implements(Finalable::class, Nameable::class);
+		$this->useTraits(Final_::class, Name::class);
+
+		$this->addConst(new Constant('MY_FIRST_CONST', 'true'));
+		$this->addConst( new Constant('MY_SECONDNST', 'true'));
+		$this->addConst(new Constant('MY_THIRD_CONST', 'true'));
+
+		$this->addProperty(new Property('test', VisibilityHint::PROTECTED));
+		$this->addProperty(new Property('testTwo', VisibilityHint::PROTECTED));
+
+		$method = new Method('sayHello', VisibilityHint::PUBLIC);
+		$method->useExtraComment(false);
+		$this->addMethod($method);
+
+		$this->addMethod(new Method('Bar', VisibilityHint::PROTECTED));
+
+		$this->toString()->shouldReturn(
+			'<?php
+
+namespace spec\Kanel\Enuma;
+
+use Prophecy\Argument;
+use spec\Kanel\Enuma\ClassCreatorSpec;
+use Kanel\Enuma\Definition\Finalable;
+use Kanel\Enuma\Definition\Nameable;
+use Kanel\Enuma\Component\Atoms\Final_;
+use Kanel\Enuma\Component\Atoms\Name;
+
+/**
+ * This is my comment
+ * and this the rest
+ */
+final class Foo extends ClassCreatorSpec implements Finalable, Nameable
+{
+    use Final_;
+    use Name;
+
+    const MY_FIRST_CONST = true;
+    const MY_SECONDNST = true;
+    const MY_THIRD_CONST = true;
+
+    protected $test;
+    protected $testTwo;
+
+    public function sayHello()
+    {
+
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function Bar()
+    {
+
+    }
+}
+
+'
+		);
+	}
 
     function it_should_be_possible_to_add_many_functions_with_comments()
     {
@@ -788,7 +863,6 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
         $method2 = new Method('Bar', VisibilityHint::PROTECTED);
         $method2->setComment('This is my second cool function');
         $this->addMethod($method2);
-
         $this->toString()->shouldReturn(
             '<?php
 
@@ -819,6 +893,7 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my cool function
+     * @return mixed
      */
     public function sayHello()
     {
@@ -827,6 +902,7 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my second cool function
+     * @return mixed
      */
     protected function Bar()
     {
@@ -896,11 +972,13 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my cool function
+     * @return mixed
      */
     abstract public function sayHello();
 
     /**
      * This is my second cool function
+     * @return mixed
      */
     final protected function Bar()
     {
@@ -978,6 +1056,7 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my second cool function
+     * @return mixed
      */
     protected function Bar()
     {
@@ -1056,6 +1135,7 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my second cool function
+     * @return mixed
      */
     protected function Bar()
     {
@@ -1141,6 +1221,7 @@ final class Foo extends ClassCreatorSpec implements Finalable, Nameable
 
     /**
      * This is my second cool function
+     * @return mixed
      */
     protected function Bar()
     {

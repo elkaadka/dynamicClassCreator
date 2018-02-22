@@ -27,18 +27,7 @@ class Sections
 		$this->sections = [
 			self::NAMESPACE_SECTION => '',
 			self::USE_SECTION => [],
-			self::CLASS_COMMENT_SECTION => '',
-			self::CLASS_FINAL_ABSTRACT_SECTION => '',
-			self::CLASS_TYPE_SECTION => '',
-			self::CLASS_NAME => '',
-			self::CLASS_EXTENDS_SECTION => '',
-			self::CLASS_IMPLEMENTED_CLASSES_SECTION => [],
-			self::TRAIT_SECTION => [],
-			self::CONST_SECTION => [],
-			self::PROPERTIES_SECTION => [],
-			self::METHODS_SECTION => [],
-			self::CLASS_END_SECTION => '}',
-			self::LINE_FEED => '',
+			self::CLASS => '',
 			self::PHP_CLOSE_TAG_SECTION0 => '?>',
 		];
 	}

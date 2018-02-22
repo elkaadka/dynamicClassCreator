@@ -2,6 +2,8 @@
 
 namespace Kanel\Enuma\Component\Atoms;
 
+use Kanel\Enuma\Component\Comment_;
+
 trait Comment
 {
     protected $comment;
@@ -11,7 +13,7 @@ trait Comment
         return $this->comment;
     }
 
-    public function setComment(string $comment)
+    public function setComment(Comment_ $comment)
     {
         $this->comment = $comment;
     }

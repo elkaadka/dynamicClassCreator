@@ -3,68 +3,73 @@
 namespace Kanel\Enuma;
 
 use Kanel\Enuma\CodingStyle\CodingStyle;
-use Kanel\Enuma\CodingStyle\Psr2;
 use Kanel\Enuma\Exception\EnumaException;
-use Kanel\Enuma\Helpers\ClassNameExtractor;
-use Kanel\Enuma\Helpers\CommentGeneration;
 
 /**
  * Class ClassEditor
  * @package Kanel\Enuma
  */
-class ClassEditor
+class ClassEditor extends ClassCreator
 {
-    use ClassNameExtractor;
-    use CommentGeneration;
-
-    protected $content;
+    protected $classFile;
     protected $codingStyle;
+    protected $sections;
 
     /**
      * ClassEditor constructor.
-     * @param string $classFileName
+     * @param string $className
      * @param CodingStyle|null $codingStyle
      * @throws EnumaException
      */
     public function __construct(string $className, CodingStyle $codingStyle = null)
     {
-        if (!!class_exists($className)) {
+        if (!class_exists($className)) {
             throw new EnumaException("class $className not found");
         }
 
-        $this->codingStyle = $codingStyle ?? new Psr2();
-        $this->deconstruct($className);
-    }
-
-    public function deconstruct(string $className)
-    {
-        $reflectionClass = new \ReflectionClass($className);
-    }
+        $this->classFile = (new \ReflectionClass($className))->getFileName();
+        $this->sections = new Sections();
+		parent::__construct($codingStyle);
+	}
 
 
-    public function renameTo(string $newName)
-    {
-        $this->content = preg_replace(
-            '/((final|abstract)?\sclass\s+)([a-zA-Z0-9_]+\ )([a-zA-Z0-9_\\\\\s]{0,}{)/',
-            '$1'.$newName.' $3',
-            $this->content
-        );
-    }
+	public function rename(string $newName): ClassEditor
+	{
+		$this->class($newName);
 
-    /**
-     * Adds all the methods sent as parameters dynamically inside the php class
-     * @param Method $method
-     * @return string
-     */
-    public function addMethod(Method $method): string
-    {
-        $lastClosingBrackets = strrpos($this->content, '}');
-        $this->content = substr($this->content, 0, $lastClosingBrackets) .
-            "\n" .
-            $method .
-            "\n" .
-            substr($this->content, $lastClosingBrackets);
+		return $this;
+	}
 
-        return $this->content;
-    }
+	public function toString() : string
+	{
+		$content = file_get_contents($this->classFile);
+		print_r( token_get_all($content));exit;
+		if ($this->sections->getSection(Sections::CLASS_NAME)) {
+			$this->content = preg_replace(
+				'/(class\s+)([a-zA-Z0-9_]+\ )([a-zA-Z0-9_\\\\\s]{0,})/',
+				'$1'.$this->sections->getSection(Sections::CLASS_NAME).' $3',
+				$this->content
+			);
+		}
+
+	}
+
+	public function __toString()
+	{
+		return $this->toString();
+	}
+
+	public function saveToFile(string $fileName)
+	{
+		return file_put_contents(
+			$fileName,
+			$this->toString(),
+			'r+'
+		);
+	}
+
+	public function getClassFile(): string
+	{
+		return $this->classFile;
+	}
 }

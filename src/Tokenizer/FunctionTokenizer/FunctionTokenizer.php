@@ -1,37 +1,55 @@
 <?php
 
-namespace Kanel\Enuma\Printer;
+namespace Kanel\Enuma\Tokenizer\FunctionTokenizer;
 
 use Kanel\Enuma\CodingStyle\CodingStyle;
 use Kanel\Enuma\Component\Parameter;
 use Kanel\Enuma\Helper\CommentGeneration;
 use Kanel\Enuma\Helper\ValuePrinter;
 use Kanel\Enuma\Sections;
+use Kanel\Enuma\Tokenizer\Tokenizable;
 
-class FunctionPrinter implements Printable
+class FunctionTokenizer implements Tokenizable
 {
 	use CommentGeneration;
 	use ValuePrinter;
 
-	public static function print(Sections $sections, CodingStyle $codingStyle): string
+	public static function getTokens(Sections $sections, CodingStyle $codingStyle): array
 	{
+		$functions = $sections->getSection(Sections::METHODS_SECTION);
+		if (!$functions) {
+			return [];
+		}
+
+		$tokenizers = [
+			new FunctionCommentTokenizer(),
+		];
+
+		$tokens = [];
+
+		foreach ($tokenizers as $tokenizer) {
+			$tokens = array_merge($tokens, $tokenizer->getTokens($sections, $codingStyle));
+		}
+
+		return $tokens;
+
 		$functions = $sections->getSection(Sections::METHODS_SECTION);
 
 		if (!$functions) {
-			return '';
+			return [];
 		}
 
-		$_ = $codingStyle->getNewLine();
+		$tokens = [];
 
 		foreach ($functions as $function) {
 
-			$_ .= rtrim(
-				$codingStyle->getNewLine()
-				. self::generateDocComment(
-					$function->getComment(),
-					$codingStyle->getIndentation(),
-					$codingStyle->getNewLine()
-				)
+			$tokens[] = [
+				T_WHITESPACE,
+				$codingStyle->getIndentation(),
+			];
+
+
+			$_ .=
 				. $codingStyle->getIndentation()
 				. ($function->isAbstract() ? 'abstract ' : '')
 				. ($function->isFinal() ? 'final ' : '')
@@ -65,9 +83,12 @@ class FunctionPrinter implements Printable
 					. $codingStyle->getIndentation()
 					. '}'
 				)
-			) . $codingStyle->getNewLine();;
+			)
+				. $codingStyle->getNewLine()
+				. $codingStyle->getNewLine();
+			;
 		}
 
-		return $_;
+		return rtrim($_, $codingStyle->getNewLine()) . $codingStyle->getNewLine() ;
 	}
 }

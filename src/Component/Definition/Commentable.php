@@ -2,9 +2,11 @@
 
 namespace Kanel\Enuma\Component\Definition;
 
+use Kanel\Enuma\Component\Comment_;
+
 interface Commentable
 {
 	public function getComment();
 
-	public function setComment(string $comment);
+	public function setComment(Comment_ $comment);
 }
